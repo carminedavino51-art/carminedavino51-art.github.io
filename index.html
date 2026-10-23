@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carmine D'Avino | OS_DEFENSE_GRID</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Monospace (Share Tech Mono e VT323) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome per icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --matrix-green: #0f0;
+            --matrix-dark: #001100;
+            --hud-bg: rgba(2, 6, 2, 0.75);
+            --hud-border: rgba(0, 255, 0, 0.4);
+            --glitch-red: #ff003c;
+            --glitch-blue: #00f0ff;
+        }
+
+        /* CUSTOM CURSOR */
+        body, html {
+            margin: 0; padding: 0;
+            background-color: #000;
+            color: var(--matrix-green);
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            cursor: crosshair; /* Mirino come cursore di default */
+        }
+
+        /* MATRIX BACKGROUND */
+        #matrix-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -3;
+        }
+
+        /* CRT SCANLINES & VIGNETTE */
+        .crt-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.95);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* BOOT SEQUENCE SCREEN */
+        #boot-sequence {
+            position: fixed; inset: 0;
+            background-color: #000;
+            z-index: 10000;
+            padding: 2rem;
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            display: flex; flex-direction: column;
+        }
+        .boot-cursor::after {
+            content: '█'; animation: blink 1s step-start infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* HUD PANELS (Glassmorphism + Tech Borders) */
+        .hud-panel {
+            background-color: var(--hud-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--hud-border);
+            position: relative;
+            box-shadow: 0 0 15px rgba(0,255,0,0.05), inset 0 0 20px rgba(0,255,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .hud-panel:hover {
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 20px rgba(0,255,0,0.15), inset 0 0 30px rgba(0,255,0,0.1);
+        }
+
+        /* TECH CORNERS */
+        .tech-corner { position: absolute; width: 15px; height: 15px; transition: 0.3s; }
+        .tc-tl { top: -2px; left: -2px; border-top: 2px solid var(--matrix-green); border-left: 2px solid var(--matrix-green); }
+        .tc-tr { top: -2px; right: -2px; border-top: 2px solid var(--matrix-green); border-right: 2px solid var(--matrix-green); }
+        .tc-bl { bottom: -2px; left: -2px; border-bottom: 2px solid var(--matrix-green); border-left: 2px solid var(--matrix-green); }
+        .tc-br { bottom: -2px; right: -2px; border-bottom: 2px solid var(--matrix-green); border-right: 2px solid var(--matrix-green); }
+        .hud-panel:hover .tech-corner { width: 25px; height: 25px; border-color: #fff; }
+
+        /* PROFILE PICTURE RADAR RINGS */
+        .avatar-container {
+            position: relative; width: 180px; height: 180px; margin: 0 auto;
+        }
+        .radar-ring-outer {
+            position: absolute; inset: -10px;
+            border: 2px dashed rgba(0, 255, 0, 0.6);
+            border-radius: 50%;
+            animation: rotate-right 12s linear infinite;
+        }
+        .radar-ring-inner {
+            position: absolute; inset: -2px;
+            border: 1px solid var(--matrix-green);
+            border-top: 3px solid transparent;
+            border-bottom: 3px solid transparent;
+            border-radius: 50%;
+            animation: rotate-left 8s linear infinite;
+        }
+        .profile-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            filter: grayscale(100%) contrast(120%) brightness(80%);
+            border: 2px solid var(--matrix-dark);
+            transition: 0.5s;
+        }
+        .avatar-container:hover .profile-img {
+            filter: grayscale(0%) contrast(100%) brightness(100%);
+            box-shadow: 0 0 20px var(--matrix-green);
+        }
+        @keyframes rotate-right { 100% { transform: rotate(360deg); } }
+        @keyframes rotate-left { 100% { transform: rotate(-360deg); } }
+
+        /* GLITCH TEXT EFFECT ON HOVER */
+        .glitch-text { position: relative; display: inline-block; }
+        .glitch-text:hover {
+            animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            color: #fff;
+            text-shadow: 2px 2px var(--glitch-red), -2px -2px var(--glitch-blue);
+        }
+        @keyframes glitch-skew {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* BUTTONS */
+        .cyber-btn {
+            background: linear-gradient(45deg, transparent 5%, rgba(0, 255, 0, 0.1) 5%);
+            border: 1px solid var(--matrix-green);
+            color: var(--matrix-green);
+            box-shadow: 6px 0px 0px #003300;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .cyber-btn:hover {
+            background: var(--matrix-green);
+            color: #000;
+            box-shadow: 0px 0px 0px transparent, 0 0 15px var(--matrix-green);
+            transform: translate(2px, 2px);
+        }
+
+        /* DATA STREAM TEXT */
+        #data-stream {
+            font-size: 0.7rem; line-height: 1.2; opacity: 0.7;
+            height: 100px; overflow: hidden; font-family: 'VT323', monospace;
+        }
+
+        /* ASCII PROGRESS BARS */
+        .ascii-skill { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .ascii-skill:hover { color: #fff; text-shadow: 0 0 5px var(--matrix-green); cursor: crosshair; }
+
+        /* INITIAL STATE FOR STAGGERED REVEAL */
+        #main-ui { opacity: 0; display: none; }
+        .reveal-item { opacity: 0; transform: translateY(20px); transition: 0.6s ease-out; }
+        .reveal-item.revealed { opacity: 1; transform: translateY(0); }
+
+        ::selection { background: var(--matrix-green); color: #000; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #001100; border-left: 1px solid #0f0; }
+        ::-webkit-scrollbar-thumb { background: #0f0; }
+    </style>
+</head>
+<body>
+
+    <!-- LAYER 1: MATRIX CANVAS BACKGROUND -->
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- LAYER 2: CRT SCANLINES OVERLAY -->
+    <div class="crt-overlay"></div>
+
+    <!-- LAYER 3: INITIAL BOOT SEQUENCE -->
+    <div id="boot-sequence">
+        <div id="boot-text" class="mb-2"></div>
+        <div id="boot-cursor" class="boot-cursor"></div>
+    </div>
+
+    <!-- LAYER 4: MAIN DASHBOARD (HIDDEN ON LOAD) -->
+    <div id="main-ui" class="relative z-10 min-h-screen p-4 md:p-8 max-w-7xl mx-auto flex flex-col gap-6">
+        
+        <!-- HEADER ROW -->
+        <header class="hud-panel p-4 reveal-item flex justify-between items-center">
+            <div class="tech-corner tc-tl"></div><div class="tech-corner tc-tr"></div>
+            <div class="tech-corner tc-bl"></div><div class="tech-corner tc-br"></div>
+            
+            <div class="font-bold text-xl glitch-text">SYS.CTRL // OMEGA_PROTOCOL</div>
+            <div class="text-xs border border-green-500/50 p-1 px-3 bg-green-900/30 blink-bg">
+                NETWORK: <span class="text-white">SECURE</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+            
+            <!-- LEFT COLUMN: IDENTITY & COMMS -->
+            <aside class="lg:col-span-4 flex flex-col gap-6">
+                
+                <!-- PROFILE PANEL -->
+                <div class="hud-panel p-6 text-center reveal-item">
+                    <div class="tech-corner tc-tl"></div><div class="tech-corner tc-tr"></div>
+                    <div class="tech-corner tc-bl"></div><div class="tech-corner tc-br"></div>
+                    
+                    <!-- FOTO PROFILO - INSERISCI QUI IL LINK DELLA TUA FOTO -->
+                    <div class="avatar-container mb-6 mt-4">
+                        <div class="radar-ring-outer"></div>
+                        <div class="radar-ring-inner"></div>
+                        <!-- Sostituisci il link qui sotto con l'URL della tua foto -->
+                        <img src="profilo.jpg.jpeg" alt="Carmine Avatar" class="profile-img">
+                        <!-- Decorazione Mirino centrale -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
+                            <i class="fa-solid fa-crosshairs text-4xl text-green-500/30"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="text-3xl font-bold uppercase glitch-text mb-1">Carmine D'Avino</h1>
+                    <h2 class="text-sm border-b border-green-500/30 pb-4 mb-4">Cybersecurity Engineering</h2>
+
+                    <div class="text-xs text-left bg-black/60 p-3 font-['VT323'] text-lg mb-6 border-l-2 border-[#0f0]">
+                        <div class="flex justify-between"><span>ID_UTENTE:</span> <span class="text-white">CDA-51</span></div>
+                        <div class="flex justify-between"><span>STATO:</span> <span class="text-white">OPERATIVO</span></div>
+                        <div class="flex justify-between"><span>LOCAZIONE:</span> <span class="text-white">ITALIA</span></div>
+                    </div>
+
+                    <!-- COMMS / SOCIAL -->
+                    <div class="flex flex-col gap-3">
+                        <a href="https://github.com/carminedavino51-art" target="_blank" class="cyber-btn py-2 text-sm font-bold uppercase">
+                            <i class="fa-brands fa-github mr-2"></i> Access_GitHub
+                        </a>
+                        <a href="#" class="cyber-btn py-2 text-sm font-bold uppercase">
+                            <i class="fa-brands fa-linkedin mr-2"></i> Access_LinkedIn
+                        </a>
+                        <a href="mailto:carminedavino51@gmail.com" class="cyber-btn py-2 text-sm font-bold uppercase border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black hover:shadow-[0_0_15px_#eab308]">
+                            <i class="fa-solid fa-envelope mr-2"></i> Transmit_Message
+                        </a>
+                    </div>
+                </div>
+
+                <!-- LIVE DATA STREAM (Animazione background) -->
+                <div class="hud-panel p-4 reveal-item hidden md:block">
+                    <div class="tech-corner tc-tl"></div><div class="tech-corner tc-tr"></div>
+                    <div class="tech-corner tc-bl"></div><div class="tech-corner tc-br"></div>
+                    <h3 class="text-xs border-b border-green-500/30 pb-1 mb-2 font-bold">> BACKGROUND_PROCESSES</h3>
+                    <div id="data-stream" class="text-green-500/60">
+                        <!-- Popolato via JS -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- RIGHT COLUMN: INTEL & ARTIFACTS -->
+            <main class="lg:col-span-8 flex flex-col gap-6">
+                
+                <!-- ABOUT ME -->
+                <section class="hud-panel p-6 reveal-item">
+                    <div class="tech-corner tc-tl"></div><div class="tech-corner tc-tr"></div>
+                    <div class="tech-corner tc-bl"></div><div class="tech-corner tc-br"></div>
+                    <h2 class="text-2xl font-bold mb-4 glitch-text border-l-4 border-[#0f0] pl-3 uppercase">
+                        [01] Intel_Personale
+                    </h2>
+                    <p class="text-sm leading-relaxed text-gray-300 mb-4 bg-black/40 p-4 border border-green-900">
+                        Studente di Ingegneria per la Cybersecurity. Costruisco la mia competenza unendo solide basi algoritmiche a un approccio fortemente pratico e "hands-on". Metodico nell'analisi, rapido nell'assimilare procedure complesse e addestrato a gestire carichi operativi intensi.
+                    </p>
+                    <div class="flex items-center text-sm font-bold bg-green-900/20 p-2 border border-green-500/50">
+                        <i class="fa-solid fa-crosshairs text-[#0f0] mr-3 animate-pulse"></i>
+                        <span>OBIETTIVO_PRIMARIO:</span> 
+                        <span class="text-white ml-2">Inserimento settore Cyber Defense / Aerospaziale.</span>
+                    </div>
+                </section>
+
+                <!-- PROGETTI (RAIN RUN) -->
+                <section class="hud-panel p-6 reveal-item">
+                    <div class="tech-corner tc-tl"></div><div class="tech-corner tc-tr"></div>
+                    <div class="tech-corner tc-bl"></div><div class="tech-corner tc-br"></div>
+                    <h2 class="text-2xl font-bold mb-4 glitch-text border-l-4 border-[#0f0] pl-3 uppercase flex justify-between">
+                        <span>[02] Software_Artifacts</span>
+                        <span class="text-xs font-normal text-green-500/50">./projects/</span>
+                    </h2>
+                    
+                    <!-- RAIN RUN CARD -->
+                    <div class="bg-black/60 border border-[#0f0]/30 hover:border-[#0f0] transition-colors p-5 relative group">
+                        <!-- Elemento decorativo hover -->
+                        <div class="absolute top-0 right-0 w-8 h-8 bg-[#0f0]/10 border-l border-b border-[#0f0]/30 flex items-center justify-center group-hover:bg-[#0f0] group-hover:text-black transition-all">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-[#0f0] transition-colors">>> Rain Run [Endless Runner]</h3>
+                        <div class="flex gap-2 mb-4 font-['VT323'] text-lg">
+                            <span class="bg-[#002200] border border-[#0f0]/50 px-2 py-0">KOTLIN</span>
+                            <span class="bg-[#002200] border border-[#0f0]/50 px-2 py-0">OOP_LOGIC</span>
+                            <span class="bg-[#002200] border border-[#0f0]/50 px-2 py-0">2D_PHYSICS</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-5">
+                            Sviluppo accademico di un videogioco 2D (clone T-Rex). Focus architetturale su: generazione procedurale degli ostacoli, gestione avanzata del <i>Game Loop</i> per il rendering e calcolo vettoriale per le collisioni fisiche delle hitbox.
+                        </p>
+                        <a href="https://github.com/carminedavino51-art/rain-run" target="_blank" class="cyber-btn py-1 px-4 text-xs font-bold uppercase inline-block">
+                            [ EXTRACT_SOURCE_CODE ]
+                        </a>
+                    </div>
+                </section>
+
+                <!-- LABS & HARDWARE -->
+                <section class="hud-panel p-6 reveal-item">
+                    <div class="tech-corner tc-tl"></div><div class="tech-corner tc-tr"></div>
+                    <div class="tech-corner tc-bl"></div><div class="tech-corner tc-br"></div>
+                    <h2 class="text-2xl font-bold mb-4 glitch-text border-l-4 border-[#0f0] pl-3 uppercase flex justify-between">
+                        <span>[03] Hardware & Labs</span>
+                        <span class="text-xs font-normal text-green-500/50">./environments/</span>
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- LAB 1: EMBEDDED -->
+                        <div class="bg-black/50 border border-gray-700 hover:border-[#0f0] p-4 transition-all hover:bg-black/80">
+                            <h4 class="font-bold text-white mb-1"><i class="fa-solid fa-microchip text-[#0f0] mr-2"></i>Sistemi Embedded</h4>
+                            <div class="text-[10px] text-[#0f0] mb-2 tracking-widest border-b border-gray-800 pb-1">PCTO // C/C++ // SENSORS</div>
+                            <p class="text-sm text-gray-400">Architettura e interfacciamento fisico di microcontrollori. Gestione segnali I/O per display, motori e sensori. Pratica di cablaggio hardware e logica di controllo basso livello.</p>
+                        </div>
+                        
+                        <!-- LAB 2: CYBER -->
+                        <div class="bg-black/50 border border-gray-700 hover:border-[#0f0] p-4 transition-all hover:bg-black/80">
+                            <h4 class="font-bold text-white mb-1"><i class="fa-solid fa-network-wired text-[#0f0] mr-2"></i>Cyber Homelab</h4>
+                            <div class="text-[10px] text-[#0f0] mb-2 tracking-widest border-b border-gray-800 pb-1">VIRTUALBOX // NETWORKING</div>
+                            <p class="text-sm text-gray-400">Costruzione di ambienti virtuali isolati per l'analisi di rete e testing. Setup di hypervisor per simulazione scenari difensivi e studio protocolli TCP/IP.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SKILLS (ASCII METERS) -->
+                <section class="hud-panel p-6 reveal-item">
+                    <div class="tech-corner tc-tl"></div><div class="tech-corner tc-tr"></div>
+                    <div class="tech-corner tc-bl"></div><div class="tech-corner tc-br"></div>
+                    <h2 class="text-2xl font-bold mb-4 glitch-text border-l-4 border-[#0f0] pl-3 uppercase">
+                        [04] System_Capabilities
+                    </h2>
+                    
+                    <div class="font-['VT323'] text-xl bg-black/60 p-4 border border-[#0f0]/30 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-1">
+                        <div class="ascii-skill"><span>> C/C++</span> <span>[#######---]</span></div>
+                        <div class="ascii-skill"><span>> KOTLIN</span> <span>[########--]</span></div>
+                        <div class="ascii-skill"><span>> JAVA</span> <span>[######----]</span></div>
+                        <div class="ascii-skill"><span>> VIRTUALBOX</span> <span>[#######---]</span></div>
+                        <div class="ascii-skill"><span>> LINUX_SHELL</span> <span>[######----]</span></div>
+                        <div class="ascii-skill"><span>> HW_WIRING</span> <span>[########--]</span></div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+        
+        <footer class="text-center text-[10px] text-green-500/50 mt-4 reveal-item font-['VT323'] tracking-widest">
+            CONNECTION ESTABLISHED // ENCRYPTION: RSA-4096 // END OF TRANSMISSION.
+        </footer>
+    </div>
+
+    <script>
+        /* --- 1. MATRIX DIGITAL RAIN (Sfondo) --- */
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~'.split('');
+        const fontSize = 14;
+        const columns = Math.floor(width / fontSize);
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, width, height);
+            
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px "Share Tech Mono"';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        /* --- 2. BOOT SEQUENCE --- */
+        const bootLines = [
+            "INIT ROOT KERNEL v9.4.2...",
+            "LOADING MODULES: NET, CRYPTO, UI... [OK]",
+            "MOUNTING VIRTUAL FILE SYSTEMS... [OK]",
+            "ESTABLISHING SECURE CONNECTION TO GITHUB_NODE...",
+            "BYPASSING PROXY SERVER... [SUCCESS]",
+            "AUTHENTICATING USER: CARMINE D'AVINO...",
+            "ACCESS LEVEL: GRANTED.",
+            "INITIALIZING DEFENSE GRID DASHBOARD..."
+        ];
+        
+        const bootText = document.getElementById('boot-text');
+        const bootScreen = document.getElementById('boot-sequence');
+        const mainUI = document.getElementById('main-ui');
+        let bootIdx = 0;
+
+        function typeBootSequence() {
+            if (bootIdx < bootLines.length) {
+                const p = document.createElement('div');
+                p.textContent = "> " + bootLines[bootIdx];
+                bootText.appendChild(p);
+                bootIdx++;
+                
+                // Simula pause casuali tipiche di un terminale
+                let delay = Math.random() * 150 + 50; 
+                if (bootIdx === 4 || bootIdx === 7) delay = 700; 
+                
+                setTimeout(typeBootSequence, delay);
+            } else {
+                setTimeout(revealDashboard, 600);
+            }
+        }
+
+        /* --- 3. REVEAL DASHBOARD & STAGGERED ANIMATION --- */
+        function revealDashboard() {
+            bootScreen.style.opacity = '0';
+            bootScreen.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                bootScreen.style.display = 'none';
+                mainUI.style.display = 'flex';
+                // Trigger reflow per l'animazione
+                void mainUI.offsetWidth; 
+                mainUI.style.opacity = '1';
+                mainUI.style.transition = 'opacity 0.5s ease';
+                
+                // Anima i pannelli uno dopo l'altro
+                const items = document.querySelectorAll('.reveal-item');
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('revealed');
+                    }, index * 150);
+                });
+                
+                // Inizia il data stream
+                startDataStream();
+            }, 500);
+        }
+
+        /* --- 4. LIVE DATA STREAM GENERATOR --- */
+        function startDataStream() {
+            const streamContainer = document.getElementById('data-stream');
+            
+            setInterval(() => {
+                const hex1 = Math.random().toString(16).substr(2, 4).toUpperCase();
+                const hex2 = Math.random().toString(16).substr(2, 4).toUpperCase();
+                const hex3 = Math.random().toString(16).substr(2, 8).toUpperCase();
+                
+                const p = document.createElement('div');
+                p.textContent = `0x${hex1} : 0x${hex2} -> [SYS.${hex3}]`;
+                
+                streamContainer.insertBefore(p, streamContainer.firstChild);
+                
+                // Mantieni solo le ultime 8 righe
+                if (streamContainer.childElementCount > 8) {
+                    streamContainer.removeChild(streamContainer.lastChild);
+                }
+            }, 400); // Genera una riga ogni 400ms
+        }
+
+        // Avvia la sequenza al caricamento
+        window.onload = () => {
+            setTimeout(typeBootSequence, 300);
+        };
+    </script>
+</body>
+</html>
