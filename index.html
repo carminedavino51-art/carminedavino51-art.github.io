@@ -203,15 +203,19 @@
                 <div class="space-y-4 text-xl">
                     <div class="flex items-center gap-4">
                         <span class="w-32 text-green-600" data-i18n="lang_label">LINGUAGGI:</span>
-                        <span class="text-white">C, C++, Kotlin, Java</span>
+                        <span class="text-white">C, C++, Kotlin, Java <span class="text-green-400 opacity-70 tracking-widest">[#######---]</span></span>
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="w-32 text-green-600" data-i18n="hw_label">EMBEDDED:</span>
-                        <span class="text-white">Microcontrollori, I/O Interfacciamento</span>
+                        <span class="text-white">Microcontrollori, I/O <span class="text-green-400 opacity-70 tracking-widest">[########--]</span></span>
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="w-32 text-green-600" data-i18n="sys_label">SISTEMI:</span>
-                        <span class="text-white">VirtualBox, Linux CLI, Reti</span>
+                        <span class="text-white">Linux CLI, Reti, VM <span class="text-green-400 opacity-70 tracking-widest">[######----]</span></span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-32 text-green-600" data-i18n="web_label">WEB DEV:</span>
+                        <span class="text-white">HTML / CSS / JS <span class="text-green-400 opacity-70 tracking-widest">[#####-----]</span></span>
                     </div>
                 </div>
             </section>
@@ -241,6 +245,27 @@
                             Progetto PCTO. Sviluppo logiche di controllo su microcontrollori. Interfacciamento I/O, sensori e attuatori fisici.
                         </p>
                     </div>
+                </div>
+            </section>
+
+            <!-- Contatti -->
+            <section class="hud-panel p-6">
+                <h2 class="text-2xl mb-6 border-b border-green-500 pb-2 flex items-center gap-2">
+                    <span class="animate-pulse">▶</span> <span data-i18n="contact_title">RETE DI COMUNICAZIONE // CONTATTI</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <a href="mailto:tuamail@email.it" class="border border-green-600 p-4 hover:bg-green-500 hover:text-black transition-all shadow-[0_0_10px_rgba(0,255,0,0.2)]">
+                        <span class="text-xl tracking-widest block mb-1">EMAIL</span>
+                        <span class="text-sm opacity-80" data-i18n="contact_email">Invia Trasmissione</span>
+                    </a>
+                    <a href="#" target="_blank" class="border border-green-600 p-4 hover:bg-green-500 hover:text-black transition-all shadow-[0_0_10px_rgba(0,255,0,0.2)]">
+                        <span class="text-xl tracking-widest block mb-1">LINKEDIN</span>
+                        <span class="text-sm opacity-80" data-i18n="contact_linkedin">Profilo Professionale</span>
+                    </a>
+                    <a href="https://github.com/carminedavino51-art" target="_blank" class="border border-green-600 p-4 hover:bg-green-500 hover:text-black transition-all shadow-[0_0_10px_rgba(0,255,0,0.2)]">
+                        <span class="text-xl tracking-widest block mb-1">GITHUB</span>
+                        <span class="text-sm opacity-80" data-i18n="contact_github">Archivio Codice</span>
+                    </a>
                 </div>
             </section>
 
@@ -274,7 +299,12 @@
                 proj1_desc: "Videogioco arcade sviluppato in Kotlin. Gestione logica orientata agli oggetti e rendering grafico. Codice sorgente documentato su GitHub.",
                 proj2_title: "Lab Sistemi Embedded [C/C++]",
                 proj2_desc: "Progetto PCTO. Sviluppo logiche di controllo su microcontrollori. Interfacciamento I/O, sensori e attuatori fisici.",
-                footer_text: "© 2026 Carmine D'Avino. Tutti i diritti riservati. // CONNESSIONE CRIPTATA"
+                footer_text: "© 2026 Carmine D'Avino. Tutti i diritti riservati. // CONNESSIONE CRIPTATA",
+                web_label: "WEB DEV:",
+                contact_title: "RETE DI COMUNICAZIONE // CONTATTI",
+                contact_email: "Invia Trasmissione",
+                contact_linkedin: "Profilo Professionale",
+                contact_github: "Archivio Codice"
             },
             en: {
                 btn: "[ ITA ] TRANSLATE",
@@ -293,7 +323,12 @@
                 proj1_desc: "Arcade video game developed in Kotlin. Object-oriented logic and graphical rendering. Source code documented on GitHub.",
                 proj2_title: "Embedded Systems Lab [C/C++]",
                 proj2_desc: "PCTO Project. Development of control logic on microcontrollers. I/O interfacing, sensors, and physical actuators.",
-                footer_text: "© 2026 Carmine D'Avino. All rights reserved. // ENCRYPTED CONNECTION"
+                footer_text: "© 2026 Carmine D'Avino. All rights reserved. // ENCRYPTED CONNECTION",
+                web_label: "WEB DEV:",
+                contact_title: "COMMUNICATION NETWORK // CONTACTS",
+                contact_email: "Send Transmission",
+                contact_linkedin: "Professional Profile",
+                contact_github: "Code Archive"
             }
         };
 
