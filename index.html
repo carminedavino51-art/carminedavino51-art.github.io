@@ -1,404 +1,452 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carmine D'Avino | Cyber Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #050505;
-            color: #00ff00;
-            font-family: 'VT323', monospace;
-            overflow-x: hidden;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carmine D'Avino · Portfolio · Sistemi, Reti e Cybersecurity</title>
+  <meta name="description" content="Portfolio di Carmine D'Avino: Perito Informatico e studente di Ingegneria e Scienze Informatiche per la Cybersecurity (Università Parthenope). Sistemi, reti, sicurezza informatica.">
+  <meta name="author" content="Carmine D'Avino">
+  <meta property="og:title" content="Carmine D'Avino · Sistemi, Reti e Cybersecurity">
+  <meta property="og:description" content="Perito Informatico e studente di Cybersecurity all'Università Parthenope. Progetti, competenze e contatti.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://carminedavino51-art.github.io/">
+  <meta property="og:image" content="https://carminedavino51-art.github.io/profilo.jpg">
+  <meta name="theme-color" content="#0b100d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230b100d'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='28' font-weight='700' fill='%2342d392'%3ECD%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b100d;
+      --bg-2: #101713;
+      --panel: #131c17;
+      --line: #22302a;
+      --text: #e7ece9;
+      --muted: #9aa8a1;
+      --dim: #6d7c75;
+      --accent: #42d392;
+      --accent-ink: #062014;
+      --radius: 10px;
+      --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Griglia di sfondo, discreta */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: .25;
+      mask-image: radial-gradient(ellipse at top, #000 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at top, #000 0%, transparent 70%);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
-        /* Effetto scorrimento matrice */
-        #matrix-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            opacity: 0.3;
-        }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
 
-        /* Pannelli di sistema */
-        .hud-panel {
-            background: rgba(0, 20, 0, 0.7);
-            border: 1px solid #00ff00;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2), inset 0 0 15px rgba(0, 255, 0, 0.1);
-            backdrop-filter: blur(4px);
-            position: relative;
-        }
-        
-        /* Angoli dei pannelli (stile mirino) */
-        .hud-panel::before, .hud-panel::after {
-            content: ''; position: absolute; width: 10px; height: 10px; border: 2px solid #00ff00;
-        }
-        .hud-panel::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-        .hud-panel::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(11, 16, 13, .85);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 58px; gap: 16px; }
+    .brand { font-family: var(--mono); font-weight: 600; color: var(--text); font-size: 15px; white-space: nowrap; }
+    .brand span { color: var(--accent); }
+    .nav-links { display: flex; gap: 22px; list-style: none; font-size: 14px; }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .lang-btn {
+      font-family: var(--mono); font-size: 13px; font-weight: 500;
+      background: transparent; color: var(--text);
+      border: 1px solid var(--line); border-radius: 6px;
+      padding: 6px 10px; cursor: pointer;
+    }
+    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* Testo Glitch */
-        .glitch-text {
-            position: relative;
-            animation: glitch-anim 3s infinite;
-        }
-        @keyframes glitch-anim {
-            0%, 95% { text-shadow: none; transform: translate(0); }
-            96% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; transform: translate(2px, 1px); }
-            97% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; transform: translate(-2px, -1px); }
-            98% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; transform: translate(2px, 1px); }
-            99%, 100% { text-shadow: none; transform: translate(0); }
-        }
+    /* HERO */
+    header.hero { padding: 72px 0 56px; }
+    .hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
+    .prompt { font-family: var(--mono); font-size: 14px; color: var(--accent); margin-bottom: 14px; }
+    .prompt .cursor { display: inline-block; width: 8px; height: 1em; background: var(--accent); vertical-align: -2px; margin-left: 4px; animation: blink 1.1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    h1 { font-size: clamp(36px, 6vw, 54px); line-height: 1.08; font-weight: 700; letter-spacing: -0.02em; }
+    .role { font-size: clamp(18px, 2.4vw, 21px); color: var(--text); margin-top: 14px; font-weight: 500; }
+    .role-sub { color: var(--muted); margin-top: 6px; }
+    .facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 20px; font-family: var(--mono); font-size: 13.5px; color: var(--muted); list-style: none; }
+    .facts li::before { content: "▸ "; color: var(--accent); }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-weight: 600; font-size: 15px;
+      padding: 11px 18px; border-radius: 8px;
+      border: 1px solid var(--line); color: var(--text); background: var(--panel);
+    }
+    .btn:hover { border-color: var(--accent); text-decoration: none; }
+    .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .btn svg { width: 17px; height: 17px; flex: none; }
+    .photo {
+      width: 200px; height: 200px; border-radius: 50%; overflow: hidden;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 0 6px rgba(66, 211, 146, .08);
+    }
+    .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; display: block; }
 
-        /* Radar Profilo */
-        .radar-frame {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            border: 2px solid #00ff00;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
-        }
-        
-        .radar-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%) contrast(120%);
-            transition: filter 0.5s;
-        }
+    /* SEZIONI */
+    section { padding: 48px 0; border-top: 1px solid var(--line); }
+    .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 26px; }
+    .sec-num { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+    h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+    h3 { font-size: 18px; font-weight: 600; }
+    p + p { margin-top: 14px; }
+    .lead { font-size: 18px; color: var(--text); }
+    .muted { color: var(--muted); }
 
-        .radar-frame:hover img {
-            filter: grayscale(0%) contrast(110%);
-        }
+    /* Competenze */
+    .skills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; }
+    .card h3 { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; }
+    .tags li { font-family: var(--mono); font-size: 13.5px; padding: 4px 10px; border-radius: 6px; background: var(--bg-2); border: 1px solid var(--line); color: var(--text); }
+    .note { font-size: 14px; color: var(--dim); margin-top: 12px; }
 
-        .scanner-line {
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background: #00ff00;
-            box-shadow: 0 0 10px #00ff00;
-            top: 0;
-            animation: scan 3s linear infinite;
-        }
-        @keyframes scan { 
-            0% { top: -10%; } 
-            50% { top: 110%; } 
-            100% { top: -10%; } 
-        }
+    /* Progetti */
+    .projects { display: grid; gap: 16px; }
+    .project { display: grid; gap: 10px; }
+    .card.project h3 { font-family: var(--sans); font-size: 19px; color: var(--text); text-transform: none; letter-spacing: 0; margin-bottom: 0; }
+    .project-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .project-meta { font-family: var(--mono); font-size: 13px; color: var(--dim); }
+    .project ul.points { margin-left: 18px; color: var(--muted); }
+    .project ul.points li { margin-top: 4px; }
+    .project ul.points li::marker { color: var(--accent); }
+    .project .links { display: flex; gap: 18px; font-family: var(--mono); font-size: 14px; margin-top: 4px; }
 
-        /* Pulsante Lingua */
-        #lang-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            background: rgba(0, 20, 0, 0.9);
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
-        }
-        #lang-btn:hover {
-            background: #00ff00;
-            color: #000;
-            box-shadow: 0 0 15px #00ff00;
-        }
+    /* Timeline */
+    .timeline { list-style: none; display: grid; gap: 22px; }
+    .tl-item { display: grid; grid-template-columns: 170px 1fr; gap: 20px; }
+    .tl-date { font-family: var(--mono); font-size: 13.5px; color: var(--accent); padding-top: 3px; }
+    .tl-org { color: var(--muted); font-size: 15.5px; }
+    .tl-desc { color: var(--muted); font-size: 15.5px; margin-top: 4px; }
+    .subhead { font-family: var(--mono); font-size: 13px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin: 34px 0 18px; }
+    .subhead:first-of-type { margin-top: 0; }
 
-        /* Schermata di avvio */
-        #boot-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #050505;
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-left: 10%;
-        }
-    </style>
+    /* Contatti */
+    .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .contact-grid a { display: block; color: var(--text); }
+    .contact-grid a:hover { text-decoration: none; border-color: var(--accent); }
+    .contact-grid .label { font-family: var(--mono); font-size: 12.5px; color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
+    .contact-grid .value { margin-top: 4px; font-size: 15px; word-break: break-word; }
+
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--dim); font-size: 14px; font-family: var(--mono); }
+
+    /* Responsive */
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      header.hero { padding: 44px 0 40px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 28px; }
+      .photo { order: -1; width: 128px; height: 128px; }
+      .skills, .contact-grid { grid-template-columns: 1fr; }
+      .tl-item { grid-template-columns: 1fr; gap: 2px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .prompt .cursor { animation: none; }
+    }
+    @media print {
+      nav, .cta, .lang-btn, body::before { display: none !important; }
+      body { background: #fff; color: #000; font-size: 12pt; }
+      section { border-color: #ccc; padding: 18px 0; }
+      .card, .tags li { background: #fff; border-color: #ccc; color: #000; }
+      .muted, .tl-org, .tl-desc, .project ul.points { color: #333; }
+    }
+  </style>
 </head>
-<body class="selection:bg-green-500 selection:text-black cursor-crosshair">
+<body>
 
-    <!-- Schermata di Avvio (Boot Sequence) -->
-    <div id="boot-screen">
-        <p class="text-2xl mb-2" id="boot-1"></p>
-        <p class="text-2xl mb-2" id="boot-2"></p>
-        <p class="text-2xl mb-2 text-green-400 font-bold" id="boot-3"></p>
+  <nav aria-label="Navigazione principale">
+    <div class="wrap">
+      <a class="brand" href="#top">carmine<span>@</span>davino:~$</a>
+      <ul class="nav-links">
+        <li><a href="#chi-sono" data-en="About">Chi sono</a></li>
+        <li><a href="#competenze" data-en="Skills">Competenze</a></li>
+        <li><a href="#progetti" data-en="Projects">Progetti</a></li>
+        <li><a href="#percorso" data-en="Background">Percorso</a></li>
+        <li><a href="#contatti" data-en="Contact">Contatti</a></li>
+      </ul>
+      <button class="lang-btn" id="lang-btn" type="button" aria-label="Switch to English">EN</button>
     </div>
+  </nav>
 
-    <!-- Pulsante Traduzione Traduzione -->
-    <button id="lang-btn" onclick="toggleLanguage()">[ ENG ] TRADUCI</button>
+  <main id="top">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="prompt">$ whoami<span class="cursor" aria-hidden="true"></span></p>
+          <h1>Carmine D'Avino</h1>
+          <p class="role" data-en="IT Technician (Perito Informatico) · Systems, Networks and Cybersecurity">Perito Informatico · Sistemi, Reti e Cybersecurity</p>
+          <p class="role-sub" data-en="Computer Science and Engineering for Cybersecurity student — Parthenope University of Naples">Studente di Ingegneria e Scienze Informatiche per la Cybersecurity — Università Parthenope</p>
+          <ul class="facts">
+            <li data-en="Somma Vesuviana (Naples), Italy">Somma Vesuviana (NA)</li>
+            <li data-en="English B2 (certified)">Inglese B2 certificato</li>
+            <li data-en="Open to travel">Disponibile a trasferte</li>
+          </ul>
+          <div class="cta">
+            <a class="btn primary" href="Carmine_DAvino_CV.pdf" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+              <span data-en="Download CV">Scarica il CV</span>
+            </a>
+            <a class="btn" href="mailto:carminedavino51@gmail.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              <span data-en="Contact me">Contattami</span>
+            </a>
+            <a class="btn" href="https://www.linkedin.com/in/carmine-d-avino-1418063a8" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.640-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.230.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+              LinkedIn
+            </a>
+            <a class="btn" href="https://github.com/carminedavino51-art" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.31.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .32.21.69.82.57A12 12 0 0 0 12 .3"/></svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+        <div class="photo">
+          <img src="profilo.jpg" alt="Foto di Carmine D'Avino" width="200" height="200">
+        </div>
+      </div>
+    </header>
 
-    <!-- Sfondo Animato -->
-    <canvas id="matrix-canvas"></canvas>
+    <!-- 01 CHI SONO -->
+    <section id="chi-sono">
+      <div class="wrap">
+        <div class="sec-head"><span class="sec-num">01</span><h2 data-en="About me">Chi sono</h2></div>
+        <p class="lead" data-en="I'm an IT Technician (Perito Informatico) and a Computer Science and Engineering for Cybersecurity student at Parthenope University. I'm interested in what keeps an organisation's IT running safely: servers, networks and information security.">
+          Sono Perito Informatico e studente di Ingegneria e Scienze Informatiche per la Cybersecurity all'Università Parthenope. Mi interessa ciò che tiene in piedi, in sicurezza, l'infrastruttura IT di un'azienda: server, reti e sicurezza informatica.
+        </p>
+        <p class="muted" data-en="Alongside my studies I practise hands-on with virtual machines, Linux and TryHackMe labs. My work experience — on technical installation sites and in shift-based teams — taught me reliability, punctuality and problem solving under pressure. I've been passionate about aviation since I was a child: my goal is to bring my IT skills — systems, networks and security — to the aerospace sector.">
+          Accanto allo studio mi esercito in pratica con macchine virtuali, Linux e i laboratori di TryHackMe. Le mie esperienze di lavoro — nei cantieri di impiantistica e in team organizzati su turni — mi hanno insegnato affidabilità, puntualità e problem solving sotto pressione. Sono appassionato di aviazione fin da bambino: il mio obiettivo è portare le mie competenze informatiche — sistemi, reti e sicurezza — nel settore aerospaziale.
+        </p>
+      </div>
+    </section>
 
-    <!-- Contenitore Principale -->
-    <main class="max-w-6xl mx-auto p-4 md:p-8 pt-20 grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 hidden" id="main-content">
-        
-        <!-- COLONNA SINISTRA: PROFILO -->
-        <aside class="col-span-1 flex flex-col gap-6">
-            
-            <div class="hud-panel p-6 text-center">
-                <div class="radar-frame mb-6">
-                    <!-- QUI C'È IL COLLEGAMENTO ALLA TUA FOTO -->
-                    <img src="profilo.jpg" alt="Carmine D'Avino Foto">
-                    <div class="scanner-line"></div>
-                </div>
-                
-                <h1 class="text-4xl font-bold glitch-text mb-2 tracking-widest text-white">CARMINE D'AVINO</h1>
-                <p class="text-xl mb-4 border-b border-green-800 pb-2" data-i18n="id_user">ID UTENTE: CDA_51</p>
-                
-                <div class="text-left space-y-2 text-lg">
-                    <div class="flex justify-between">
-                        <span class="text-green-700" data-i18n="status_label">STATO:</span> 
-                        <span class="text-white" data-i18n="status_val">OPERATIVO</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-green-700" data-i18n="loc_label">LOCAZIONE:</span> 
-                        <span class="text-white" data-i18n="loc_val">ITALIA</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-green-700" data-i18n="role_label">RUOLO:</span> 
-                        <span class="text-white" data-i18n="role_val">STUDENTE / DEV</span>
-                    </div>
-                </div>
+    <!-- 02 COMPETENZE -->
+    <section id="competenze">
+      <div class="wrap">
+        <div class="sec-head"><span class="sec-num">02</span><h2 data-en="Skills">Competenze</h2></div>
+        <div class="skills">
+          <div class="card">
+            <h3 data-en="Systems &amp; networks">Sistemi &amp; reti</h3>
+            <ul class="tags">
+              <li>Linux (CLI)</li>
+              <li data-en="Virtualisation · VirtualBox">Virtualizzazione · VirtualBox</li>
+              <li data-en="TCP/IP networking basics">Fondamenti di reti TCP/IP</li>
+              <li data-en="Operating systems">Sistemi operativi</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 data-en="Security">Sicurezza</h3>
+            <ul class="tags">
+              <li data-en="TryHackMe (hands-on labs)">TryHackMe (laboratori pratici)</li>
+              <li data-en="Cybersecurity fundamentals">Fondamenti di cybersecurity</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 data-en="Programming">Programmazione</h3>
+            <ul class="tags">
+              <li>C</li><li>C++</li><li>Java</li><li>Kotlin</li><li>SQL</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 data-en="Web &amp; languages">Web &amp; lingue</h3>
+            <ul class="tags">
+              <li>HTML</li><li>CSS</li><li>JavaScript</li>
+              <li data-en="Italian (native)">Italiano (madrelingua)</li>
+              <li data-en="English B2 (certified)">Inglese B2 (certificato)</li>
+            </ul>
+          </div>
+        </div>
+        <p class="note" data-en="Currently studying: Computer Networks (Kurose–Ross, top-down approach) and Operating Systems (Tanenbaum).">In studio ora: Reti di calcolatori (Kurose–Ross, approccio top-down) e Sistemi Operativi (Tanenbaum).</p>
+      </div>
+    </section>
+
+    <!-- 03 PROGETTI -->
+    <section id="progetti">
+      <div class="wrap">
+        <div class="sec-head"><span class="sec-num">03</span><h2 data-en="Projects">Progetti</h2></div>
+        <div class="projects">
+
+          <article class="card project">
+            <div class="project-top">
+              <h3>Rain Run</h3>
+              <span class="project-meta">Android · Kotlin · Room</span>
             </div>
-
-            <!-- Pannello Flusso Dati (Estetico) -->
-            <div class="hud-panel p-4 h-32 overflow-hidden text-xs text-green-800 opacity-70">
-                <div id="data-stream" class="leading-tight"></div>
+            <p class="muted" data-en="Endless-runner game for Android inspired by Chrome's offline dinosaur, built for the university exam in Mobile Device Programming.">Gioco endless-runner per Android ispirato al dinosauro offline di Chrome, sviluppato per l'esame universitario di Programmazione di Dispositivi Mobili.</p>
+            <ul class="points">
+              <li data-en="Game state managed with ViewModel and StateFlow, so the score survives configuration changes">Stato di gioco gestito con ViewModel e StateFlow, così il punteggio sopravvive ai cambi di configurazione</li>
+              <li data-en="High score saved locally with Room (entity, DAO, database, repository) using suspend functions">Record salvato in locale con Room (entity, DAO, database, repository) tramite funzioni suspend</li>
+              <li data-en="Lifecycle handling: automatic pause in onPause and resume in onResume">Gestione del ciclo di vita: pausa automatica in onPause e ripresa in onResume</li>
+              <li data-en="View Binding instead of findViewById for cleaner code">View Binding al posto di findViewById per un codice più pulito</li>
+            </ul>
+            <div class="links">
+              <a href="https://github.com/carminedavino51-art/rain-run" target="_blank" rel="noopener" data-en="→ Source code on GitHub">→ Codice sorgente su GitHub</a>
             </div>
-        </aside>
+          </article>
 
-        <!-- COLONNA DESTRA: CONTENUTI -->
-        <div class="col-span-1 md:col-span-2 flex flex-col gap-6">
-            
-            <!-- Chi Sono -->
-            <section class="hud-panel p-6">
-                <h2 class="text-2xl mb-4 border-b border-green-500 pb-2 flex items-center gap-2">
-                    <span class="animate-pulse">▶</span> <span data-i18n="about_title">SISTEMA PRINCIPALE // CHI SONO</span>
-                </h2>
-                <p class="text-xl leading-relaxed text-gray-300" data-i18n="about_desc">
-                    Studente di Ingegneria e Scienze Informatiche con una forte passione per la programmazione, l'hardware e la sicurezza informatica (Cybersecurity). Il mio obiettivo è sviluppare sistemi sicuri e interfacce embedded per i settori dell'aerospazio e della difesa.
-                </p>
-            </section>
+          <article class="card project">
+            <div class="project-top">
+              <h3 data-en="Embedded Systems Lab">Laboratorio di sistemi embedded</h3>
+              <span class="project-meta">C / C++ · PCTO</span>
+            </div>
+            <p class="muted" data-en="School–work project (PCTO) at ITIS E. Majorana: control logic on microcontrollers, interfacing with sensors and actuators through digital and analogue I/O.">Progetto di alternanza scuola-lavoro (PCTO) all'ITIS E. Majorana: logiche di controllo su microcontrollori, interfacciamento con sensori e attuatori tramite I/O digitali e analogici.</p>
+          </article>
 
-            <!-- Tech Stack -->
-            <section class="hud-panel p-6">
-                <h2 class="text-2xl mb-4 border-b border-green-500 pb-2 flex items-center gap-2">
-                    <span class="animate-pulse">▶</span> <span data-i18n="tech_title">MODULI DI COMPETENZA // TECH STACK</span>
-                </h2>
-                <div class="space-y-4 text-xl">
-                    <div class="flex items-center gap-4">
-                        <span class="w-32 text-green-600" data-i18n="lang_label">LINGUAGGI:</span>
-                        <span class="text-white">C, C++, Kotlin, Java <span class="text-green-400 opacity-70 tracking-widest">[#######---]</span></span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-32 text-green-600" data-i18n="hw_label">EMBEDDED:</span>
-                        <span class="text-white">Microcontrollori, I/O <span class="text-green-400 opacity-70 tracking-widest">[########--]</span></span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-32 text-green-600" data-i18n="sys_label">SISTEMI:</span>
-                        <span class="text-white">Linux CLI, Reti, VM <span class="text-green-400 opacity-70 tracking-widest">[######----]</span></span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-32 text-green-600" data-i18n="web_label">WEB DEV:</span>
-                        <span class="text-white">HTML / CSS / JS <span class="text-green-400 opacity-70 tracking-widest">[#####-----]</span></span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Progetti -->
-            <section class="hud-panel p-6">
-                <h2 class="text-2xl mb-4 border-b border-green-500 pb-2 flex items-center gap-2">
-                    <span class="animate-pulse">▶</span> <span data-i18n="proj_title">ARCHIVIO DATI // PROGETTI & LABORATORI</span>
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Progetto 1 -->
-                    <div class="border border-green-800 p-4 hover:border-green-400 transition-colors bg-black/50">
-                        <h3 class="text-xl text-white mb-2 glitch-text" data-i18n="proj1_title">Rain Run [Kotlin]</h3>
-                        <p class="text-lg text-gray-400 mb-4" data-i18n="proj1_desc">
-                            Videogioco arcade sviluppato in Kotlin. Gestione logica orientata agli oggetti e rendering grafico. Codice sorgente documentato su GitHub.
-                        </p>
-                        <a href="https://github.com/carminedavino51-art" target="_blank" class="text-green-500 hover:text-white underline">
-                            >> GitHub Link
-                        </a>
-                    </div>
-
-                    <!-- Progetto 2 -->
-                    <div class="border border-green-800 p-4 hover:border-green-400 transition-colors bg-black/50">
-                        <h3 class="text-xl text-white mb-2 glitch-text" data-i18n="proj2_title">Lab Sistemi Embedded [C/C++]</h3>
-                        <p class="text-lg text-gray-400" data-i18n="proj2_desc">
-                            Progetto PCTO. Sviluppo logiche di controllo su microcontrollori. Interfacciamento I/O, sensori e attuatori fisici.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Contatti -->
-            <section class="hud-panel p-6">
-                <h2 class="text-2xl mb-6 border-b border-green-500 pb-2 flex items-center gap-2">
-                    <span class="animate-pulse">▶</span> <span data-i18n="contact_title">RETE DI COMUNICAZIONE // CONTATTI</span>
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                    <a href="mailto:carminedavino51@gmail.com" class="border border-green-600 p-4 hover:bg-green-500 hover:text-black transition-all shadow-[0_0_10px_rgba(0,255,0,0.2)]">
-                        <span class="text-xl tracking-widest block mb-1">EMAIL</span>
-                        <span class="text-sm opacity-80" data-i18n="contact_email">Invia Trasmissione</span>
-                    </a>
-                    <a href="https://www.linkedin.com/in/carmine-d-avino-1418063a8" target="_blank" class="border border-green-600 p-4 hover:bg-green-500 hover:text-black transition-all shadow-[0_0_10px_rgba(0,255,0,0.2)]">
-                        <span class="text-xl tracking-widest block mb-1">LINKEDIN</span>
-                        <span class="text-sm opacity-80" data-i18n="contact_linkedin">Profilo Professionale</span>
-                    </a>
-                    <a href="https://github.com/carminedavino51-art" target="_blank" class="border border-green-600 p-4 hover:bg-green-500 hover:text-black transition-all shadow-[0_0_10px_rgba(0,255,0,0.2)]">
-                        <span class="text-xl tracking-widest block mb-1">GITHUB</span>
-                        <span class="text-sm opacity-80" data-i18n="contact_github">Archivio Codice</span>
-                    </a>
-                </div>
-            </section>
+          <!--
+          ============================================================
+          LABORATORI SISTEMISTICI — da attivare SOLO quando li hai fatti
+          davvero e documentati in un repository GitHub.
+          Copia questo blocco, togli i commenti e riempilo.
+          ============================================================
+          <article class="card project">
+            <div class="project-top">
+              <h3>Homelab: dominio Windows Server</h3>
+              <span class="project-meta">Windows Server · AD DS · DNS · DHCP</span>
+            </div>
+            <p class="muted">Cosa hai costruito in una frase.</p>
+            <ul class="points">
+              <li>Cosa hai configurato (es. dominio, OU, utenti, GPO)</li>
+              <li>Un problema che hai risolto e come</li>
+            </ul>
+            <div class="links">
+              <a href="https://github.com/carminedavino51-art/NOME-REPO" target="_blank" rel="noopener">→ Documentazione su GitHub</a>
+            </div>
+          </article>
+          -->
 
         </div>
-    </main>
+      </div>
+    </section>
 
-    <!-- FOOTER COPYRIGHT -->
-    <footer class="relative z-10 text-center pb-6 mt-8">
-        <p class="text-green-700 text-lg opacity-80" data-i18n="footer_text">
-            © 2026 Carmine D'Avino. Tutti i diritti riservati. // CONNESSIONE CRIPTATA
-        </p>
-    </footer>
+    <!-- 04 PERCORSO -->
+    <section id="percorso">
+      <div class="wrap">
+        <div class="sec-head"><span class="sec-num">04</span><h2 data-en="Background">Percorso</h2></div>
 
-    <script>
-        // --- DIZIONARIO TRADUZIONI ---
-        const translations = {
-            it: {
-                btn: "[ ENG ] TRADUCI",
-                id_user: "ID UTENTE: CDA_51",
-                status_label: "STATO:", status_val: "OPERATIVO",
-                loc_label: "LOCAZIONE:", loc_val: "ITALIA",
-                role_label: "RUOLO:", role_val: "STUDENTE / DEV",
-                about_title: "SISTEMA PRINCIPALE // CHI SONO",
-                about_desc: "Studente di Ingegneria e Scienze Informatiche con una forte passione per la programmazione, l'hardware e la sicurezza informatica (Cybersecurity). Il mio obiettivo è sviluppare sistemi sicuri e interfacce embedded per i settori dell'aerospazio e della difesa.",
-                tech_title: "MODULI DI COMPETENZA // TECH STACK",
-                lang_label: "LINGUAGGI:",
-                hw_label: "EMBEDDED:",
-                sys_label: "SISTEMI:",
-                proj_title: "ARCHIVIO DATI // PROGETTI & LABORATORI",
-                proj1_title: "Rain Run [Kotlin]",
-                proj1_desc: "Videogioco arcade sviluppato in Kotlin. Gestione logica orientata agli oggetti e rendering grafico. Codice sorgente documentato su GitHub.",
-                proj2_title: "Lab Sistemi Embedded [C/C++]",
-                proj2_desc: "Progetto PCTO. Sviluppo logiche di controllo su microcontrollori. Interfacciamento I/O, sensori e attuatori fisici.",
-                footer_text: "© 2026 Carmine D'Avino. Tutti i diritti riservati. // CONNESSIONE CRIPTATA",
-                web_label: "WEB DEV:",
-                contact_title: "RETE DI COMUNICAZIONE // CONTATTI",
-                contact_email: "Invia Trasmissione",
-                contact_linkedin: "Profilo Professionale",
-                contact_github: "Archivio Codice"
-            },
-            en: {
-                btn: "[ ITA ] TRANSLATE",
-                id_user: "USER ID: CDA_51",
-                status_label: "STATUS:", status_val: "OPERATIONAL",
-                loc_label: "LOCATION:", loc_val: "ITALY",
-                role_label: "ROLE:", role_val: "STUDENT / DEV",
-                about_title: "MAIN SYSTEM // ABOUT ME",
-                about_desc: "Engineering and Computer Science student with a strong passion for programming, hardware, and Cybersecurity. My goal is to develop secure systems and embedded interfaces for the aerospace and defense sectors.",
-                tech_title: "SKILL MODULES // TECH STACK",
-                lang_label: "LANGUAGES:",
-                hw_label: "EMBEDDED:",
-                sys_label: "SYSTEMS:",
-                proj_title: "DATA ARCHIVE // PROJECTS & LABS",
-                proj1_title: "Rain Run [Kotlin]",
-                proj1_desc: "Arcade video game developed in Kotlin. Object-oriented logic and graphical rendering. Source code documented on GitHub.",
-                proj2_title: "Embedded Systems Lab [C/C++]",
-                proj2_desc: "PCTO Project. Development of control logic on microcontrollers. I/O interfacing, sensors, and physical actuators.",
-                footer_text: "© 2026 Carmine D'Avino. All rights reserved. // ENCRYPTED CONNECTION",
-                web_label: "WEB DEV:",
-                contact_title: "COMMUNICATION NETWORK // CONTACTS",
-                contact_email: "Send Transmission",
-                contact_linkedin: "Professional Profile",
-                contact_github: "Code Archive"
-            }
-        };
+        <h3 class="subhead" data-en="Education">Formazione</h3>
+        <ol class="timeline">
+          <li class="tl-item">
+            <span class="tl-date" data-en="Oct 2025 – present">ott 2025 – oggi</span>
+            <div>
+              <h3 data-en="Bachelor's in Computer Science and Engineering for Cybersecurity">Laurea triennale in Ingegneria e Scienze Informatiche per la Cybersecurity</h3>
+              <p class="tl-org" data-en="Parthenope University of Naples — Nola campus">Università degli Studi di Napoli Parthenope — sede di Nola</p>
+            </div>
+          </li>
+          <li class="tl-item">
+            <span class="tl-date">2019 – 2024</span>
+            <div>
+              <h3 data-en="Technical diploma in Computer Science (Perito Informatico)">Diploma di Perito Informatico</h3>
+              <p class="tl-org">ITIS E. Majorana — Somma Vesuviana (NA)</p>
+            </div>
+          </li>
+        </ol>
 
-        let currentLang = 'it';
+        <h3 class="subhead" data-en="Work experience">Esperienze lavorative</h3>
+        <ol class="timeline">
+          <li class="tl-item">
+            <span class="tl-date" data-en="Aug 2026 – present">ago 2026 – oggi</span>
+            <div>
+              <h3>Crew Member</h3>
+              <p class="tl-org">McDonald's — Brusciano (NA)</p>
+              <p class="tl-desc" data-en="Shift work in a team, with fast pace and strict operating procedures.">Lavoro su turni in team, con ritmi elevati e procedure operative standard.</p>
+            </div>
+          </li>
+          <li class="tl-item">
+            <span class="tl-date" data-en="Sep 2025 – Sep 2026">set 2025 – set 2026</span>
+            <div>
+              <h3 data-en="Plumbing &amp; heating installation assistant">Assistente termoidraulico / impiantista</h3>
+              <p class="tl-desc" data-en="Installation work on site: practical problem solving, safety rules, working alongside the client.">Installazioni sul campo: problem solving pratico, rispetto delle norme di sicurezza, lavoro a contatto con il cliente.</p>
+            </div>
+          </li>
+          <li class="tl-item">
+            <span class="tl-date" data-en="May – Jul 2026">mag – lug 2026</span>
+            <div>
+              <h3 data-en="Shelf stocker">Scaffalista</h3>
+              <p class="tl-org">Gemar</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'it' ? 'en' : 'it';
-            document.getElementById('lang-btn').innerText = translations[currentLang].btn;
-            
-            // Aggiorna tutti i testi con l'attributo data-i18n
-            document.querySelectorAll('[data-i18n]').forEach(element => {
-                const key = element.getAttribute('data-i18n');
-                if (translations[currentLang][key]) {
-                    element.innerText = translations[currentLang][key];
-                }
-            });
-        }
+    <!-- 05 CONTATTI -->
+    <section id="contatti">
+      <div class="wrap">
+        <div class="sec-head"><span class="sec-num">05</span><h2 data-en="Contact">Contatti</h2></div>
+        <p class="muted" style="margin-bottom:22px" data-en="Open to internships, apprenticeships and entry-level roles in IT, systems administration and cybersecurity — especially in aerospace and defence.">Disponibile per stage, apprendistato e primo inserimento in ambito IT, amministrazione di sistemi e cybersecurity — in particolare nel settore aerospazio e difesa.</p>
+        <div class="contact-grid">
+          <a class="card" href="mailto:carminedavino51@gmail.com">
+            <div class="label">Email</div>
+            <div class="value">carminedavino51@gmail.com</div>
+          </a>
+          <a class="card" href="https://www.linkedin.com/in/carmine-d-avino-1418063a8" target="_blank" rel="noopener">
+            <div class="label">LinkedIn</div>
+            <div class="value">carmine-d-avino</div>
+          </a>
+          <a class="card" href="https://github.com/carminedavino51-art" target="_blank" rel="noopener">
+            <div class="label">GitHub</div>
+            <div class="value">carminedavino51-art</div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
 
-        // --- SEQUENZA DI AVVIO ---
-        setTimeout(() => document.getElementById('boot-1').innerText = "> INIZIALIZZAZIONE SISTEMA...", 500);
-        setTimeout(() => document.getElementById('boot-2').innerText = "> CARICAMENTO MODULI DI SICUREZZA...", 1500);
-        setTimeout(() => document.getElementById('boot-3').innerText = "> ACCESSO CONSENTITO.", 2500);
-        setTimeout(() => {
-            document.getElementById('boot-screen').style.display = 'none';
-            document.getElementById('main-content').classList.remove('hidden');
-        }, 3200);
+  <footer>
+    <div class="wrap">© <span id="year">2026</span> Carmine D'Avino</div>
+  </footer>
 
-        // --- EFFETTO MATRIX SFONDO ---
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = Array.from({length: columns}).fill(1);
+  <script>
+    (function () {
+      var KEY = 'portfolio-lang';
+      var nodes = document.querySelectorAll('[data-en]');
+      // Salva il testo italiano originale
+      nodes.forEach(function (el) { el.setAttribute('data-it', el.innerHTML.trim()); });
 
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 50);
-
-        // --- GENERATORE DI DATI RANDOM (Estetico) ---
-        const dataStream = document.getElementById('data-stream');
-        setInterval(() => {
-            let randData = "";
-            for(let i=0; i<15; i++) {
-                randData += "0x" + Math.floor(Math.random()*16777215).toString(16).toUpperCase() + " ";
-            }
-            dataStream.innerText = randData + "\n" + dataStream.innerText.substring(0, 300);
-        }, 200);
-
-        // Ridimensionamento finestra per il canvas
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+      var btn = document.getElementById('lang-btn');
+      function apply(lang) {
+        nodes.forEach(function (el) {
+          el.innerHTML = el.getAttribute(lang === 'en' ? 'data-en' : 'data-it');
         });
-    </script>
+        document.documentElement.lang = lang;
+        btn.textContent = lang === 'en' ? 'IT' : 'EN';
+        btn.setAttribute('aria-label', lang === 'en' ? 'Passa all\'italiano' : 'Switch to English');
+        try { localStorage.setItem(KEY, lang); } catch (e) {}
+      }
+      var current = 'it';
+      try { if (localStorage.getItem(KEY) === 'en') current = 'en'; } catch (e) {}
+      if (current === 'en') apply('en');
+      btn.addEventListener('click', function () {
+        current = current === 'it' ? 'en' : 'it';
+        apply(current);
+      });
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
 </body>
 </html>
